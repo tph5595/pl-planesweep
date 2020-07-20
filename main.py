@@ -2,8 +2,9 @@
 should be a list of tuples with the birth then the death value """
 
 from heapq import heappush, heappop
-import shapely # pylint: disable=W0611
-from shapely.geometry import LineString, Point # pylint: disable=W0611
+# import shapely  # pyflakes: disable=W0611
+from shapely.geometry import LineString  # , Point # pylint: disable=W0611
+
 
 class PersistantMountain:
     """ A specific mountain in the generation of the PersistantLandscape """
@@ -16,7 +17,7 @@ class PersistantMountain:
         self.death = death
 
     def set_pos(self, pos):
-        """ Set the position of a PersistantMountain in the PersistantLandscape.
+        """Set the position of a PersistantMountain in the PersistantLandscape.
         This is for bookkeeping  between events. It does not affect the status
         structure in a PersistantLandscape"""
         self.__pos = pos
@@ -25,8 +26,13 @@ class PersistantMountain:
         """ Returns the current position of the PersistantMountain """
         return self.__pos
 
+    def after_midpoint(self):
+        """ Signafy that the slope has changed after the midpoint and take
+        relevent actions """
+        self.slope = -1
+
     def get_p1(self):
-        """ Returns the START of the current line segment that is intersected by
+        """Returns the START of the current line segment that is intersected by
         the status line"""
         if self.current_slope == 1:
             return self.birth
@@ -39,9 +45,9 @@ class PersistantMountain:
             return self.midpoint
         return self.death
 
+
 class Event:
-    """ Container for the information related to a PersistantLandscape event """
-    # TODO needs a sorting method to work with heapq
+    """Container for the information related to a PersistantLandscape event """
     # Defines the sorting order of different event points
     BIRTH_POINT = 0
     MIDDL_POINT = 1
@@ -59,9 +65,10 @@ class Event:
         return self.typ
 
     def sort_order(self):
-        """ Returns a tuple of the different parameters to sort on in order. The
+        """Returns a tuple of the different parameters to sort on in order. The
         last value is the item itself."""
         return (self.point[0], self.point[1], id(self), self)
+
 
 class PersistantLandscape:
     """ Class to manage a presistant landscape and generate a presistant
@@ -73,6 +80,7 @@ class PersistantLandscape:
         self.events = []
         self.landscapes = []
         self.status = []
+        self.max_pos = 0
 
     def clear(self, bd_pairs, max_lambda):
         """ Reset the PersistantLandscape to a clean state """
@@ -81,6 +89,7 @@ class PersistantLandscape:
         self.events = []
         self.landscapes = []
         self.status = []
+        self.max_pos = 0
 
     def __event_add(self, item):
         """ Adds an item to the event structure """
@@ -96,16 +105,22 @@ class PersistantLandscape:
         the status structure. Returns the pos the PersistantMountain was
         inserted at. """
         # Position we are about to insert at
-        pos = len(self.status)
+        pos = self.max_pos
+        self.max_pos += 1
         # Save the position we are inserting the PersistantMountain into
         event.parent_mountain.set_pos(pos)
         # Add the PersistantMountain to the bottom of the status structure
         self.status.append(event.parent_mountain)
         return pos
 
+    def __status_remove(self):
+        """ Removes the lowest PersistantMountain from the event structure """
+        self.max_pos += -1
+        self.status[self.max_pos] = None
+
     def __generate_initial_event_points(self):
-        """ Adds the start, midpoint and end points of for each bdpairs to the event
-        structure """
+        """ Adds the start, midpoint and end points of for each bdpairs to the
+        event structure """
         # Insert initial points
         for bd_pair in self.bd_pairs:
             # Birth
@@ -121,7 +136,8 @@ class PersistantLandscape:
             death_point = (death, 0)
             # Create a PersistantMountain to share between the event points so
             # that they can share variables
-            event_mountain = PersistantMountain(birth_point, mid_point, death_point)
+            event_mountain = PersistantMountain(
+                    birth_point, mid_point, death_point)
             # Create Intitial event points
             birth_event = Event(Event.BIRTH_POINT, birth_point, event_mountain)
             mid_event = Event(Event.MIDDL_POINT, mid_point, event_mountain)
@@ -148,6 +164,23 @@ class PersistantLandscape:
             return neighbor
         return None
 
+    def __intersects_with_lower_neighbor(self, mountain):
+        """ Returns true if the parent PersistantMountain of the event point
+        intersects with the PersistantMountain that is right below it in the
+        status structure """
+        # Get the neighbor PersistantMountain
+        neighbor_pos = mountain.get_pos()+1
+        if neighbor_pos >= len(self.status):
+            return None
+        neighbor = self.status[neighbor_pos]
+        # If they have the same slope they cannot intersect
+        if neighbor.current_slope == -1:
+            return None
+        # Result of the barcode theorem
+        if mountain.death[1] < neighbor.death[1]:
+            return neighbor
+        return None
+
     def __add_intersection_event(self, mountain1, mountain2):
         """ Determines the Intersection of two mountains and adds the
         intersection to the event list """
@@ -164,24 +197,54 @@ class PersistantLandscape:
     def __handle_birth_point(self, event):
         """ Update the data structure with the knowledge of a new start point
         with values defined in event """
-        pos = self.__status_add(event)
         neighbor = self.__intersects_with_upper_neighbor(event.parent_mountain)
         if neighbor is not None:
             self.__add_intersection_event(event.parent_mountain, neighbor)
+        pos = self.__status_add(event)
         if pos < self.max_lambda:
             self.landscapes[pos].add(event)
 
     def __handle_mid_point(self, event):
-        return event
+        """ Update the data structure with the knowledge of a new mid point
+        with values defined in event """
+        # Check for intersections
+        neighbor = self.__intersects_with_lower_neighbor(event.parent_mountain)
+        if neighbor is not None:
+            self.__add_intersection_event(event.parent_mountain, neighbor)
+        # Update the PersistantMountain
+        event.parent_mountain.after_midpoint()
+        # Update the logging structure
+        pos = event.parent_mountain.get_pos()
+        if pos < self.max_lambda:
+            self.landscapes[pos].add(event)
+
+    def __handle_intersection_point(self, event): # TODO
+        """ Update the data structure with the knowledge of a new intersection point
+        with values defined in event """
+        neighbor = self.__intersects_with_upper_neighbor(event.parent_mountain)
+        if neighbor is not None:
+            self.__add_intersection_event(event.parent_mountain, neighbor)
+        pos = self.__status_add(event)
+        if pos < self.max_lambda:
+            self.landscapes[pos].add(event)
+
+    def __handle_end_point(self, event):
+        """ Update the data structure with the knowledge of a new end point
+        with values defined in event """
+        pos = event.parent_mountain.get_pos()
+        if pos < self.max_lambda:
+            self.landscapes[pos].add(event)
+        # Update the event structure
+        self.__status_remove()
 
     def generate_landscapes(self):
-        """ Generate the presistant landscapes based off of the bd_pairs defined
+        """Generate the presistant landscapes based off of the bd_pairs defined
         in this PersistantLandscape"""
         # Create initial event points
         self.__generate_initial_event_points()
         # Loop over every event
-        # This loop adds any intersections it finds as new events and places them in
-        # order of x axis then y axis
+        # This loop adds any intersections it finds as new events and places
+        # them in order of x axis then y axis
         while len(self.events) > 0:
             # Get the next event
             event = self.__event_remove()
@@ -190,7 +253,7 @@ class PersistantLandscape:
             elif event.typ == event.MIDDL_POINT:
                 self.__handle_mid_point(event)
             elif event.typ == event.INTER_POINT:
-                self.__handleIntersectionPoint(event)
+                self.__handle_intersection_point(event)
             elif event.typ == event.DEATH_POINT:
-                self.__handleEndPoint(event)
+                self.__handle_end_point(event)
         return self.landscapes
