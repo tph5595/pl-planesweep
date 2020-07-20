@@ -1,7 +1,8 @@
 """ This calculates the presistant landscapes of a set of bdpairs. The pairs
 should be a list of tuples with the birth then the death value """
 
-from heapq import heappush, heappop
+from heapq import heappush, heappop, heapify
+import time
 import shapely
 from shapely.geometry import LineString, Point
 
@@ -11,7 +12,7 @@ class PersistantMountain:
 
     def __init__(self, birth, midpoint, death):
         self.__pos = -1
-        self.current_slope = 0
+        self.current_slope = 1
         self.birth = birth
         self.midpoint = midpoint
         self.death = death
@@ -30,6 +31,7 @@ class PersistantMountain:
         """ Signafy that the slope has changed after the midpoint and take
         relevent actions """
         self.slope = -1
+        return self
 
     def get_p1(self):
         """Returns the START of the current line segment that is intersected by
@@ -126,9 +128,9 @@ class PersistantLandscape:
         # Insert initial points
         for bd_pair in self.bd_pairs:
             # Birth
-            birth = bd_pair[0]
+            birth = float(bd_pair[0])
             # Death
-            death = bd_pair[1]
+            death = float(bd_pair[1])
             # Calculate midpoint
             # TODO Double check this formula
             half_dist = ((death-birth)/2)
@@ -157,12 +159,13 @@ class PersistantLandscape:
         neighbor_pos = mountain.get_pos()-1
         if neighbor_pos < 0:
             return None
+        # print("checking " + str(neighbor_pos))
         neighbor = self.status[neighbor_pos]
         # If they have the same slope they cannot intersect
         if neighbor.current_slope == 1:
             return None
         # Result of the barcode theorem
-        if mountain.death[1] > neighbor.death[1]:
+        if mountain.death > neighbor.death:
             return neighbor
         return None
 
@@ -172,23 +175,27 @@ class PersistantLandscape:
         status structure """
         # Get the neighbor PersistantMountain
         neighbor_pos = mountain.get_pos()+1
-        if neighbor_pos >= len(self.status):
+        if neighbor_pos >= len(self.status) or \
+                self.status[neighbor_pos] is None:
             return None
         neighbor = self.status[neighbor_pos]
         # If they have the same slope they cannot intersect
         if neighbor.current_slope == -1:
             return None
         # Result of the barcode theorem
-        if mountain.death[1] < neighbor.death[1]:
+        if mountain.death < neighbor.death:
             return neighbor
         return None
 
     def __add_intersection_event(self, mountain1, mountain2):
         """ Determines the Intersection of two mountains and adds the
         intersection to the event list """
+        print("Intersection found!")
         # Define lines for the intersection
         line1 = LineString([mountain1.get_p1(), mountain1.get_p2()])
         line2 = LineString([mountain2.get_p1(), mountain2.get_p2()])
+        print(line1)
+        print(line2)
         # Find the intersection
         int_pt = line1.intersection(line2)
         # Create a new event point and add it to the event list
@@ -199,22 +206,22 @@ class PersistantLandscape:
     def __handle_birth_point(self, event):
         """ Update the data structure with the knowledge of a new start point
         with values defined in event """
+        pos = self.__status_add(event)
         neighbor = self.__intersects_with_upper_neighbor(event.parent_mountain)
         if neighbor is not None:
             self.__add_intersection_event(event.parent_mountain, neighbor)
-        pos = self.__status_add(event)
         if pos < self.max_lambda:
             self.landscapes[pos].append(event.point)
 
     def __handle_mid_point(self, event):
         """ Update the data structure with the knowledge of a new mid point
         with values defined in event """
+        # Update the PersistantMountain
+        event.parent_mountain.after_midpoint().slope
         # Check for intersections
         neighbor = self.__intersects_with_lower_neighbor(event.parent_mountain)
         if neighbor is not None:
             self.__add_intersection_event(neighbor, event.parent_mountain)
-        # Update the PersistantMountain
-        event.parent_mountain.after_midpoint()
         # Update the logging structure
         pos = event.parent_mountain.get_pos()
         if pos < self.max_lambda:
@@ -222,27 +229,32 @@ class PersistantLandscape:
 
     def __flip_points(self, mountain1, mountain2):
         """ Flip two points """
-        # Update status structure
-        self.status[mountain1.get_pos()] = mountain2
-        self.status[mountain2.get_pos()] = mountain1
-        # Update PersistantMountains
+        # Switch positions
         m1_pos = mountain1.get_pos()
         mountain1.set_pos(mountain2.get_pos())
         mountain2.set_pos(m1_pos)
+        # Update status structure
+        self.status[mountain1.get_pos()] = mountain1
+        self.status[mountain2.get_pos()] = mountain2
 
     def __handle_intersection_point(self, event):
         """ Update the data structure with the knowledge of a new intersection
         point with values defined in event """
-        new_top_mtn = self.parent_mountain
-        new_bot_mtn = self.parent_mountain2
+        new_top_mtn = event.parent_mountain
+        new_bot_mtn = event.parent_mountain2
         # Flip the points
         self.__flip_points(new_top_mtn, new_bot_mtn)
         # Check for intersections
+        print("Begin")
+        print(str(new_top_mtn.get_pos()))
+        print(str(new_bot_mtn.get_pos()))
         upper_neighbor = self.__intersects_with_upper_neighbor(new_top_mtn)
         if upper_neighbor is not None:
+            print("Ha")
             self.__add_intersection_event(new_top_mtn, upper_neighbor)
         lower_neighbor = self.__intersects_with_lower_neighbor(new_bot_mtn)
         if lower_neighbor is not None:
+            print("Nope")
             self.__add_intersection_event(lower_neighbor, new_bot_mtn)
         # Update logging structure
         pos_top = new_top_mtn.get_pos()
@@ -270,6 +282,9 @@ class PersistantLandscape:
         # This loop adds any intersections it finds as new events and places
         # them in order of x axis then y axis
         while len(self.events) > 0:
+            if True:
+                print(len(self.events))
+                time.sleep(.300)
             # Get the next event
             event = self.__event_remove()
             if event.typ == event.BIRTH_POINT:
