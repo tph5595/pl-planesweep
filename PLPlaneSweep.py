@@ -30,7 +30,7 @@ class PersistantMountain:
     def after_midpoint(self):
         """ Signafy that the slope has changed after the midpoint and take
         relevent actions """
-        self.slope = -1
+        self.current_slope = -1
         return self
 
     def get_p1(self):
@@ -217,7 +217,7 @@ class PersistantLandscape:
         """ Update the data structure with the knowledge of a new mid point
         with values defined in event """
         # Update the PersistantMountain
-        event.parent_mountain.after_midpoint().slope
+        event.parent_mountain.after_midpoint()
         # Check for intersections
         neighbor = self.__intersects_with_lower_neighbor(event.parent_mountain)
         if neighbor is not None:
