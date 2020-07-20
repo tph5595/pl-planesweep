@@ -2,8 +2,8 @@
 should be a list of tuples with the birth then the death value """
 
 from heapq import heappush, heappop
-# import shapely  # pyflakes: disable=W0611
-from shapely.geometry import LineString  # , Point # pylint: disable=W0611
+import shapely
+from shapely.geometry import LineString, Point
 
 
 class PersistantMountain:
@@ -121,6 +121,8 @@ class PersistantLandscape:
     def __generate_initial_event_points(self):
         """ Adds the start, midpoint and end points of for each bdpairs to the
         event structure """
+        for i in range(0, self.max_lambda):
+            self.landscapes.append([])
         # Insert initial points
         for bd_pair in self.bd_pairs:
             # Birth
@@ -202,7 +204,7 @@ class PersistantLandscape:
             self.__add_intersection_event(event.parent_mountain, neighbor)
         pos = self.__status_add(event)
         if pos < self.max_lambda:
-            self.landscapes[pos].add(event)
+            self.landscapes[pos].append(event.point)
 
     def __handle_mid_point(self, event):
         """ Update the data structure with the knowledge of a new mid point
@@ -216,7 +218,7 @@ class PersistantLandscape:
         # Update the logging structure
         pos = event.parent_mountain.get_pos()
         if pos < self.max_lambda:
-            self.landscapes[pos].add(event)
+            self.landscapes[pos].append(event.point)
 
     def __flip_points(self, mountain1, mountain2):
         """ Flip two points """
@@ -245,17 +247,17 @@ class PersistantLandscape:
         # Update logging structure
         pos_top = new_top_mtn.get_pos()
         if pos_top < self.max_lambda:
-            self.landscapes[pos_top].add(event)
+            self.landscapes[pos_top].append(event.point)
         pos_bot = new_bot_mtn.get_pos()
         if pos_bot < self.max_lambda:
-            self.landscapes[pos_bot].add(event)
+            self.landscapes[pos_bot].append(event.point)
 
     def __handle_end_point(self, event):
         """ Update the data structure with the knowledge of a new end point
         with values defined in event """
         pos = event.parent_mountain.get_pos()
         if pos < self.max_lambda:
-            self.landscapes[pos].add(event)
+            self.landscapes[pos].append(event.point)
         # Update the event structure
         self.__status_remove()
 
