@@ -190,12 +190,9 @@ class PersistantLandscape:
     def __add_intersection_event(self, mountain1, mountain2):
         """ Determines the Intersection of two mountains and adds the
         intersection to the event list """
-        print("Intersection found!")
         # Define lines for the intersection
         line1 = LineString([mountain1.get_p1(), mountain1.get_p2()])
         line2 = LineString([mountain2.get_p1(), mountain2.get_p2()])
-        print(line1)
-        print(line2)
         # Find the intersection
         int_pt = line1.intersection(line2)
         # Create a new event point and add it to the event list
@@ -245,16 +242,11 @@ class PersistantLandscape:
         # Flip the points
         self.__flip_points(new_top_mtn, new_bot_mtn)
         # Check for intersections
-        print("Begin")
-        print(str(new_top_mtn.get_pos()))
-        print(str(new_bot_mtn.get_pos()))
         upper_neighbor = self.__intersects_with_upper_neighbor(new_top_mtn)
         if upper_neighbor is not None:
-            print("Ha")
             self.__add_intersection_event(new_top_mtn, upper_neighbor)
         lower_neighbor = self.__intersects_with_lower_neighbor(new_bot_mtn)
         if lower_neighbor is not None:
-            print("Nope")
             self.__add_intersection_event(lower_neighbor, new_bot_mtn)
         # Update logging structure
         pos_top = new_top_mtn.get_pos()
