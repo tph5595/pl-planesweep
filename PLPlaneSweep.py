@@ -5,6 +5,8 @@ from heapq import heappush, heappop, heapify
 import time
 import shapely
 from shapely.geometry import LineString, Point
+from matplotlib import pyplot as plt
+from shapely.geometry.polygon import LinearRing, Polygon
 
 
 class PersistantMountain:
@@ -83,6 +85,7 @@ class PersistantLandscape:
         self.landscapes = []
         self.status = []
         self.max_pos = 0
+        self.debug = False
 
     def clear(self, bd_pairs, max_lambda):
         """ Reset the PersistantLandscape to a clean state """
@@ -92,6 +95,9 @@ class PersistantLandscape:
         self.landscapes = []
         self.status = []
         self.max_pos = 0
+
+    def debug(self, state):
+        self.debug = state
 
     def __event_add(self, item):
         """ Adds an item to the event structure """
@@ -274,7 +280,7 @@ class PersistantLandscape:
         # This loop adds any intersections it finds as new events and places
         # them in order of x axis then y axis
         while len(self.events) > 0:
-            if True:
+            if self.debug:
                 print(len(self.events))
                 time.sleep(.300)
             # Get the next event
@@ -288,3 +294,19 @@ class PersistantLandscape:
             elif event.typ == event.DEATH_POINT:
                 self.__handle_end_point(event)
         return self.landscapes
+
+    def plot(self):
+        """ Plot the PersistantLandscapes """
+        # Generate landscapes if they don't exist
+        if not self.landscapes:
+            self.generate_landscapes()
+        # Generate graph
+        fig = plt.figure(1, figsize=(5, 5), dpi=90)
+        ax = fig.add_subplot(111)
+        ax.set_title('Persistant Landscapes')
+        for landscape in self.landscapes:
+            poly = LineString(landscape)
+            if not poly.is_empty:
+                x, y = poly.xy
+                ax.plot(x, y)
+        plt.show()
