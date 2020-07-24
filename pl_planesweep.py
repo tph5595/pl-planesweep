@@ -1,12 +1,10 @@
 """ This calculates the presistant landscapes of a set of bdpairs. The pairs
 should be a list of tuples with the birth then the death value """
 
-from heapq import heappush, heappop, heapify
+from heapq import heappush, heappop
 import time
-import shapely
-from shapely.geometry import LineString, Point
+from shapely.geometry import LineString
 from matplotlib import pyplot as plt
-from shapely.geometry.polygon import LinearRing, Polygon
 
 
 class PersistantMountain:
@@ -96,7 +94,8 @@ class PersistantLandscape:
         self.status = []
         self.max_pos = 0
 
-    def debug(self, state):
+    def enable_debug(self, state):
+        """ Enables debug mode """
         self.debug = state
 
     def __event_add(self, item):
@@ -129,7 +128,7 @@ class PersistantLandscape:
     def __generate_initial_event_points(self):
         """ Adds the start, midpoint and end points of for each bdpairs to the
         event structure """
-        for i in range(0, self.max_lambda):
+        for _ in range(0, self.max_lambda):
             self.landscapes.append([])
         # Insert initial points
         for bd_pair in self.bd_pairs:
@@ -147,7 +146,7 @@ class PersistantLandscape:
             # Create a PersistantMountain to share between the event points so
             # that they can share variables
             event_mountain = PersistantMountain(
-                    birth_point, mid_point, death_point)
+                birth_point, mid_point, death_point)
             # Create Intitial event points
             birth_event = Event(Event.BIRTH_POINT, birth_point, event_mountain)
             mid_event = Event(Event.MIDDL_POINT, mid_point, event_mountain)
