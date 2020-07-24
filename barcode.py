@@ -1,3 +1,7 @@
+""" barcode: runs the barcode filtering algorithm on a set of bd_pairs """
+
+from heapq import heappush, heappop
+
 class Node:
     """ Node for the StackLinkedList """
 
@@ -8,6 +12,7 @@ class Node:
         self.prev = None
 
     def remove(self):
+        """ Removes a node from the structure """
         if self.next is not None:
             self.next.prev = self.prev
         if self.prev is not None:
@@ -20,7 +25,7 @@ class StackLinkedList:
 
     def __init__(self):
         """ Prepare the structure for data """
-        self.len = 0
+        self.__len = 0
         self.head = None
         self.tail = None
 
@@ -33,6 +38,7 @@ class StackLinkedList:
             self.tail.next = node
             node.prev = self.tail
             self.tail = node
+        self.__len += 1
 
     def remove(self, node):
         """ Remove the given node from the StackLinkedList """
@@ -45,14 +51,31 @@ class StackLinkedList:
         # Check if node was the tail
         if neighbors[1] is None:
             self.tail = neighbors[0]
-        self.len -= 1
+        self.__len -= 1
+
+    def len(self):
+        """ Returns the length of the structure """
+        return self.__len
 
 
 class Event:
     """ Event data container """
 
-    def __init__(self, node, idx):
+    # Class constant globals
+    BIRTH = 0
+    DEATH = 1
+
+    def __init__(self, typ, point, node, idx):
+        """ Set up the class variables """
+        self.typ = typ
+        self.point = point
         self.node = node
+        self.idx = idx
+
+    def sort_order(self):
+        """Returns a tuple of the different parameters to sort on in order. The
+        last value is the item itself."""
+        return (self.point, id(self), self)
 
 
 class BarcodeFilter:
@@ -66,17 +89,15 @@ class BarcodeFilter:
         self.sorted = False
         self.stack = StackLinkedList()
         self.filtered = []
-        self.top_k = []
+        self.top_k = {}
+        self.events = []
 
     def set_bd_pairs(self, bd_pairs):
         """ Set the birth-death pairs to be used """
         self.bd_pairs = bd_pairs
 
-    def set_sorted(self, state):
-        self.sorted = state
-
     def __handle_birth_event(self, event):
-        if len(self.stack) < self.k:
+        if self.stack.len() < self.k:
             self.filtered.append(self.bd_pairs[event.idx])
             self.top_k[event.idx] = True
         self.stack.insert(event.node)
@@ -87,24 +108,42 @@ class BarcodeFilter:
         # add it to the filtered output
         # TODO: Can keep track of the bottom most node so that no searching is
         # required here
-        if self.top_k[event.node.idx]:
+        if event.idx in self.top_k:
             tmp = event.node.next
-            while not self.top_k[tmp.data.idx]:
+            while tmp is not None and tmp.data in self.top_k:# Data is just the idx
                 tmp = tmp.next
-            # Add the new pair to the filtered output and mark it as such
-            self.top_k[tmp.data.idx] = True
-            self.filtered.append(self.bd_pairs[tmp.data.idx])
+            # Add the new pair to the filtered output and mark it as such if
+            # there is an item to add
+            if tmp is not None:
+                self.top_k[tmp.data] = True
+                self.filtered.append(self.bd_pairs[tmp.data])
+
+    def __generate_events(self):
+        """ Generate the event points for the plane sweep filter algorithm """
+        for i in range(len(self.bd_pairs)):
+            node = Node(i)
+            self.__event_add(Event(Event.BIRTH, self.bd_pairs[i][0], node, i))
+            self.__event_add(Event(Event.DEATH, self.bd_pairs[i][1], node, i))
+
+    def __event_add(self, item):
+        """ Adds an item to the event structure """
+        heappush(self.events, item.sort_order())
+
+    def __event_remove(self):
+        """ Removes the next event from the event structure """
+        tup = heappop(self.events)
+        return tup[len(tup)-1]
 
     def filter(self):
         """ Preforms the barcode filter function on bd_pairs """
-        # Values must be sorted
-        if not self.sorted:
-            self.bd_pairs.sort()
         # Generate event points from bd_pairs
-        events = self.__generate_events()
+        self.__generate_events()
         # Run plane sweep and calculate the filtered bd_pairs
-        for event in events:
+        num_iter = len(self.events)
+        for _ in range(num_iter):
+            event = self.__event_remove()
             if event.typ == event.BIRTH:
                 self.__handle_birth_event(event)
             if event.typ == event.DEATH:
                 self.__handle_death_event(event)
+        return self.filtered
