@@ -137,6 +137,8 @@ class PersistantLandscape:
             self.landscapes.append([])
         # Insert initial points
         for bd_pair in self.bd_pairs:
+            if bd_pair[0] == float("inf") or bd_pair[1] == float("inf"):
+                continue
             # Birth
             birth = float(bd_pair[0])
             # Death

@@ -64,9 +64,12 @@ problem_pairs_3 = [(0.7875611782073975, 0.7921156287193298),
                    (0.7229699492454529, 0.7927138209342957),
                    (0.7065669894218445, 0.7505898475646973)]
 
-torus_bd_pairs = prep_torus(0)[:5]
+problem_pairs_4 = [(3, float("inf")),
+                   (3, 7)]
+
+torus_bd_pairs = prep_torus(0)
 print(torus_bd_pairs)
 print("#############################")
-print(pl_runner(torus_bd_pairs, 3, debug=True))
+print(pl_runner(torus_bd_pairs, 3, debug=False))
 
 # barcode_table_tests()
