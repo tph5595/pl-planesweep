@@ -2,6 +2,7 @@
 
 from heapq import heappush, heappop
 
+
 class Node:
     """ Node for the StackLinkedList """
 
@@ -110,7 +111,8 @@ class BarcodeFilter:
         # required here
         if event.idx in self.top_k:
             tmp = event.node.next
-            while tmp is not None and tmp.data in self.top_k:# Data is just the idx
+            # Data is just the idx
+            while tmp is not None and tmp.data in self.top_k:
                 tmp = tmp.next
             # Add the new pair to the filtered output and mark it as such if
             # there is an item to add
@@ -121,6 +123,9 @@ class BarcodeFilter:
     def __generate_events(self):
         """ Generate the event points for the plane sweep filter algorithm """
         for i in range(len(self.bd_pairs)):
+            if self.bd_pairs[i][0] == float("inf") or \
+                    self.bd_pairs[i][1] == float("inf"):
+                    continue
             node = Node(i)
             self.__event_add(Event(Event.BIRTH, self.bd_pairs[i][0], node, i))
             self.__event_add(Event(Event.DEATH, self.bd_pairs[i][1], node, i))
