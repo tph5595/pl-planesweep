@@ -127,7 +127,8 @@ class PersistantLandscape:
     def __status_remove(self):
         """ Removes the lowest PersistantMountain from the event structure """
         self.max_pos += -1
-        self.status[self.max_pos] = None
+        # self.status[self.max_pos] = None
+        self.status.pop()
 
     def __generate_initial_event_points(self):
         """ Adds the start, midpoint and end points of for each bdpairs to the
