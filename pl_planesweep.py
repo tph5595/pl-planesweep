@@ -117,7 +117,11 @@ class PersistantLandscape:
         # Save the position we are inserting the PersistantMountain into
         event.parent_mountain.set_pos(pos)
         # Add the PersistantMountain to the bottom of the status structure
-        self.status.append(event.parent_mountain)
+        if len(self.status) > 0 and self.status[-1] is None:
+            # Check to see if there is an open spot
+            self.status[-1] = event.parent_mountain
+        else:
+            self.status.append(event.parent_mountain)
         return pos
 
     def __status_remove(self):
@@ -162,7 +166,8 @@ class PersistantLandscape:
         status structure """
         # Get the neighbor PersistantMountain
         neighbor_pos = mountain.get_pos()-1
-        if neighbor_pos < 0:
+        if neighbor_pos < 0 or \
+                self.status[neighbor_pos] is None:
             return None
         # print("checking " + str(neighbor_pos))
         neighbor = self.status[neighbor_pos]
@@ -280,8 +285,10 @@ class PersistantLandscape:
         # them in order of x axis then y axis
         while len(self.events) > 0:
             if self.debug:
-                print(len(self.events))
+                print("Number of events left: " + str(len(self.events)))
+                print("Status" + str(self.status))
                 time.sleep(.300)
+
             # Get the next event
             event = self.__event_remove()
             if event.typ == event.BIRTH_POINT:
