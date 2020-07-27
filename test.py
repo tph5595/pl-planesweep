@@ -1,14 +1,16 @@
 """ test: used to test the other files in this project """
-from pl_planesweep import PersistantLandscape
-from barcode import BarcodeFilter
-
 # Ripser dataset creation
-import numpy as np
-
-from ripser import ripser
-import tadasets
 import random
+import tadasets
+import numpy as np
+from ripser import ripser
 
+# Testing framework
+import pytest
+
+# Files to be tested
+from barcode import BarcodeFilter
+from pl_planesweep import PersistantLandscape
 
 def pl_test_1():
     """ Basic test with 3 bd_pairs """
@@ -17,25 +19,29 @@ def pl_test_1():
 
 
 def pl_runner(bd_pairs, k, debug=False):
+    """ Test runner far pl_planesweep """
     pl_obj = PersistantLandscape(bd_pairs, k)
     pl_obj.enable_debug(debug)
     landscapes = pl_obj.generate_landscapes()
-    pl_obj.plot()
+    # pl_obj.plot()
     return landscapes
 
 
 def barcode_table_tests():
+    """ Table driven testing for the barcode_filter """
     bd_pairs = [(0, 6), (1, 3), (2, 7)]
     print(barcode_runner(bd_pairs, 1))
 
 
 def barcode_runner(bd_pairs, k):
+    """ Test runner for barcode_filter """
     barcode_filter = BarcodeFilter(bd_pairs, k)
     filtered = barcode_filter.filter()
     return filtered
 
 
 def prep_torus(seed):
+    """ Creates torus_bd_pairs for testing using tadasets and ripser"""
     random.seed(seed)
     data = np.concatenate([
         tadasets.dsphere(n=500, d=1, r=5, noise=0.5),
@@ -47,6 +53,18 @@ def prep_torus(seed):
 
     diagrams = results0['dgms']
     return map(lambda x: (x[0], x[1]), diagrams[1])
+
+def compare_landscapes(landscape1, landscape2):
+    """ Compares two PersistantLandscapes and returns True if they are the same """
+    # Make sure they have the same k
+    if len(landscape1) != len(landscape2):
+        return False
+    # Ensure they have the same pairs in eacb persistant landscape
+    for i, _ in enumerate(landscape1, 0):
+        # The len will be 0 when there are no differing pairs
+        if len(set(landscape1[i]).symmetric_difference(set(landscape2[i]))) != 0:
+            return False
+    return True
 
 
 # with k = 3
@@ -181,16 +199,16 @@ barcode_bdtest_1 = [(0.8998820185661316, 1.0887004137039185),
                     (0.15023969113826752, 0.15087532997131348),
                     (0.12529709935188293, 0.13184352219104767)]
 
-k_1 = 4
-original_length_1 = len(barcode_bdtest_1)
-original_1 = pl_runner(barcode_bdtest_1, k_1)
-barcodes_1 = barcode_runner(barcode_bdtest_1, k_1)
-print("Removed " + str(original_length_1 - len(barcodes_1)) + " pairs. " +
-      str(original_length_1/float(len(barcodes_1))) + "%")
+K_1 = 4
+ORIGINAL_LENGTH_1 = len(barcode_bdtest_1)
+original_1 = pl_runner(barcode_bdtest_1, K_1)
+barcodes_1 = barcode_runner(barcode_bdtest_1, K_1)
+print("Removed " + str(ORIGINAL_LENGTH_1 - len(barcodes_1)) + " pairs. " +
+      str(ORIGINAL_LENGTH_1 / float(len(barcodes_1))) + "%")
 
-filtered_1 = pl_runner(barcodes_1, k_1)
+filtered_1 = pl_runner(barcodes_1, K_1)
 # https://stackoverflow.com/questions/3462143/get-difference-between-two-lists
-# print(list(set(original_1).symmetric_difference(set(filtered_1))))
+print(compare_landscapes(original_1, filtered_1))
 
 # k_2 = 2
 # original_2 = pl_runner(problem_pairs_3, k_2)
