@@ -12,6 +12,10 @@ jobs:
                               pip install -Iv Cython==0.29.12
                               pip install --user -r requirements.txt
                   - run:
+                        name: Linting Codebase
+                        command: |
+                              pylint *.py
+                  - run:
                         name: Run Integration Tests
                         command: |
                               pytest --cov=./ --junitxml=test-reports/junit.xml --html=test-reports/pytest_report.html --self-contained-html test.py
