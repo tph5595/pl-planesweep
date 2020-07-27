@@ -38,6 +38,7 @@ jobs:
                   - run:
                         name: Upload CodeCov Report
                         command: |
+                              . venv/bin/activate
                               codecov --token=3a29a7f0-97b0-407b-8bb6-d89f5136bd8a
 workflows:
       build_test:
