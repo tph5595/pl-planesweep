@@ -27,15 +27,19 @@ PROBLEM_PAIRS_3 = [(0.7875611782073975, 0.7921156287193298),
                    (0.7229699492454529, 0.7927138209342957),
                    (0.7065669894218445, 0.7505898475646973)]
 
-PROBLEM_PAIRS_4 = [(3, float("inf")),
-                   (3, 7)]
+# Should remove infs
+TEST_5_BDS = [(3, float("inf")),
+              (0, 6)]
+TEST_5_ANS = [[(0.0, 0), (3.0, 3.0), (6.0)], []]
 
+# Normal set of points
 TEST_1_BDS = [(0, 6), (1, 3), (2, 7)]
 TEST_1_ANS = [[(0.0, 0), (3.0, 3.0), (4.0, 2.0), (4.5, 2.5), (7.0, 0)], [(1.0,\
     0), (2.0, 1.0), (2.5, 0.5), (4.0, 2.0), (6.0, 0)], [(2.0, 0), (2.5, 0.5),\
         (3.0, 0)], []]
-
-@pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_1_BDS, 4, TEST_1_ANS)])
+@pytest.mark.parametrize("bd_pairs,k,answer",\
+        [(TEST_1_BDS, 4, TEST_1_ANS)],\
+        [(TEST_5_BDS, 2, TEST_5_ANS)])
 def test_pl_runner(bd_pairs, k, answer, debug=False):
     """ Test runner far pl_planesweep """
     pl_obj = PersistantLandscape(bd_pairs, k)
