@@ -33,7 +33,7 @@ PROBLEM_PAIRS_4 = [(3, float("inf")),
 TEST_PAIR_1 = [(0, 6), (1, 3), (2, 7)]
 
 @pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_PAIR_1, 4, [[], [], [], []])])
-def pl_runner(bd_pairs, k, answer, debug=False):
+def test_pl_runner(bd_pairs, k, answer, debug=False):
     """ Test runner far pl_planesweep """
     pl_obj = PersistantLandscape(bd_pairs, k)
     pl_obj.enable_debug(debug)
