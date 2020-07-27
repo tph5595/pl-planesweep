@@ -31,17 +31,14 @@ PROBLEM_PAIRS_4 = [(3, float("inf")),
                    (3, 7)]
 
 TEST_PAIR_1 = [(0, 6), (1, 3), (2, 7)]
-def test_func():
-    """ Just a test """
-    assert (1 + 0) == 1
 
-@pytest.mark.parametrize("bd_pairs,k", [(TEST_PAIR_1, 4)])
-def pl_runner(bd_pairs, k, debug=False):
+@pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_PAIR_1, 4, [[],[],[],[]])])
+def pl_runner(bd_pairs, k, answer, debug=False):
     """ Test runner far pl_planesweep """
     pl_obj = PersistantLandscape(bd_pairs, k)
     pl_obj.enable_debug(debug)
     landscapes = pl_obj.generate_landscapes()
-    assert compare_landscapes(landscapes, [[], [], [], []])
+    assert compare_landscapes(landscapes, answer)
 
 
 def barcode_table_tests():
@@ -85,7 +82,7 @@ def compare_landscapes(landscape1, landscape2):
 
 
 
-TORUS_BD_PAIRS = prep_torus(0)
+# TORUS_BD_PAIRS = prep_torus(0)
 # print(torus_bd_pairs)
 # print("#############################")
 # print(pl_runner(torus_bd_pairs, 3, debug=False))
