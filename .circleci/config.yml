@@ -9,6 +9,7 @@ jobs:
                         name: Install Python Dependencies
                         command: |
                               echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
+                              pip install -Iv Cython==0.29.12
                               pip install --user -r requirements.txt
                   - run:
                         name: Run Integration Tests
