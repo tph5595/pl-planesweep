@@ -24,7 +24,7 @@ jobs:
                         name: Linting Codebase
                         command: |
                               . venv/bin/activate
-                              pip install -r requirements/linting.txt
+                              pip install --user -r requirements/linting.txt
                               find . -type f -name "*.py" -not -path "./util/*" -not -path "./venv/*" | xargs -L1 python3.8 util/linter.py
                   - run:
                         name: Run Integration Tests
