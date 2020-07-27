@@ -32,7 +32,7 @@ PROBLEM_PAIRS_4 = [(3, float("inf")),
 
 TEST_PAIR_1 = [(0, 6), (1, 3), (2, 7)]
 
-@pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_PAIR_1, 4, [[],[],[],[]])])
+@pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_PAIR_1, 4, [[], [], [], []])])
 def pl_runner(bd_pairs, k, answer, debug=False):
     """ Test runner far pl_planesweep """
     pl_obj = PersistantLandscape(bd_pairs, k)
@@ -196,16 +196,16 @@ BARCODE_BDTEST_1 = [(0.8998820185661316, 1.0887004137039185),
                     (0.15023969113826752, 0.15087532997131348),
                     (0.12529709935188293, 0.13184352219104767)]
 
-K_1 = 4
-ORIGINAL_LENGTH_1 = len(BARCODE_BDTEST_1)
-ORIGINAL_1 = pl_runner(BARCODE_BDTEST_1, K_1)
-BARCODES_1 = barcode_runner(BARCODE_BDTEST_1, K_1)
-print("Removed " + str(ORIGINAL_LENGTH_1 - len(BARCODES_1)) + " pairs. " +
-      str(ORIGINAL_LENGTH_1 / float(len(BARCODES_1))) + "%")
+# K_1 = 4
+# ORIGINAL_LENGTH_1 = len(BARCODE_BDTEST_1)
+# ORIGINAL_1 = pl_runner(BARCODE_BDTEST_1, K_1)
+# BARCODES_1 = barcode_runner(BARCODE_BDTEST_1, K_1)
+# print("Removed " + str(ORIGINAL_LENGTH_1 - len(BARCODES_1)) + " pairs. " +
+#       str(ORIGINAL_LENGTH_1 / float(len(BARCODES_1))) + "%")
 
-FILTERED_1 = pl_runner(BARCODES_1, K_1)
-# https://stackoverflow.com/questions/3462143/get-difference-between-two-lists
-print(compare_landscapes(ORIGINAL_1, FILTERED_1))
+# FILTERED_1 = pl_runner(BARCODES_1, K_1)
+# # https://stackoverflow.com/questions/3462143/get-difference-between-two-lists
+# print(compare_landscapes(ORIGINAL_1, FILTERED_1))
 
 # k_2 = 2
 # original_2 = pl_runner(problem_pairs_3, k_2)
