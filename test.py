@@ -30,7 +30,7 @@ PROBLEM_PAIRS_3 = [(0.7875611782073975, 0.7921156287193298),
 # Should remove infs
 TEST_5_BDS = [(3, float("inf")),
               (0, 6)]
-TEST_5_ANS = [[(0.0, 0), (3.0, 3.0), (6.0)], []]
+TEST_5_ANS = [[(0.0, 0), (3.0, 3.0), (6.0, 0)], []]
 
 # Normal set of points
 TEST_1_BDS = [(0, 6), (1, 3), (2, 7)]
