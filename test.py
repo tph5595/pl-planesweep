@@ -30,9 +30,10 @@ PROBLEM_PAIRS_3 = [(0.7875611782073975, 0.7921156287193298),
 PROBLEM_PAIRS_4 = [(3, float("inf")),
                    (3, 7)]
 
-TEST_PAIR_1 = [(0, 6), (1, 3), (2, 7)]
+TEST_1_BDS = [(0, 6), (1, 3), (2, 7)]
+TEST_1_ANS = [[(0.0, 0), (3.0, 3.0), (4.0, 2.0), (4.5, 2.5), (7.0, 0)], [(1.0, 0), (2.0, 1.0), (2.5, 0.5), (4.0, 2.0), (6.0, 0)], [(2.0, 0), (2.5, 0.5), (3.0, 0)]
 
-@pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_PAIR_1, 4, [[], [], [], []])])
+@pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_1_BDS, 4, TEST_1_ANS)
 def test_pl_runner(bd_pairs, k, answer, debug=False):
     """ Test runner far pl_planesweep """
     pl_obj = PersistantLandscape(bd_pairs, k)
