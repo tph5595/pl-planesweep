@@ -14,7 +14,8 @@ jobs:
                   - run:
                         name: Linting Codebase
                         command: |
-                              pylint *.py
+                              find . -type f -name "*.py" -not -path "./util/*" |
+xargs -L1 python3.8 util/linter.py
                   - run:
                         name: Run Integration Tests
                         command: |

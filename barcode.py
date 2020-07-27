@@ -1,3 +1,4 @@
+# pylint: disable=R0903
 """ barcode: runs the barcode filtering algorithm on a set of bd_pairs """
 
 from heapq import heappush, heappop
@@ -125,7 +126,7 @@ class BarcodeFilter:
         for i in range(len(self.bd_pairs)):
             if self.bd_pairs[i][0] == float("inf") or \
                     self.bd_pairs[i][1] == float("inf"):
-                    continue
+                continue
             node = Node(i)
             self.__event_add(Event(Event.BIRTH, self.bd_pairs[i][0], node, i))
             self.__event_add(Event(Event.DEATH, self.bd_pairs[i][1], node, i))
