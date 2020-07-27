@@ -23,6 +23,7 @@ jobs:
                   - run:
                         name: Linting Codebase
                         command: |
+                              . venv/bin/activate
                               find . -type f -name "*.py" -not -path "./util/*" -not -path "./venv/*" | xargs -L1 python3.8 util/linter.py
                   - run:
                         name: Run Integration Tests
