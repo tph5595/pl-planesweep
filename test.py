@@ -73,30 +73,30 @@ def compare_landscapes(landscape1, landscape2):
 
 
 # with k = 3
-problem_pairs_1 = [(0.9748720526695251, 0.9898090958595276),
+PROBLEM_PAIRS_1 = [(0.9748720526695251, 0.9898090958595276),
                    (0.9600228071212769, 1.029630184173584),
                    (0.8873197436332703, 0.9408737421035767)]
 
-problem_pairs_2 = [(0.9688469171524048, 1.1520495414733887),
+PROBLEM_PAIRS_2 = [(0.9688469171524048, 1.1520495414733887),
                    (0.957465410232544, 1.002064824104309),
                    (0.8262945413589478, 0.9132182002067566)]
 
-problem_pairs_3 = [(0.7875611782073975, 0.7921156287193298),
+PROBLEM_PAIRS_3 = [(0.7875611782073975, 0.7921156287193298),
                    (0.7675137519836426, 0.8652346134185791),
                    (0.7498966455459595, 0.7622178196907043),
                    (0.7229699492454529, 0.7927138209342957),
                    (0.7065669894218445, 0.7505898475646973)]
 
-problem_pairs_4 = [(3, float("inf")),
+PROBLEM_PAIRS_4 = [(3, float("inf")),
                    (3, 7)]
 
-torus_bd_pairs = prep_torus(0)
+TORUS_BD_PAIRS = prep_torus(0)
 # print(torus_bd_pairs)
 # print("#############################")
 # print(pl_runner(torus_bd_pairs, 3, debug=False))
 
 # barcode_table_tests()
-barcode_bdtest_1 = [(0.8998820185661316, 1.0887004137039185),
+BARCODE_BDTEST_1 = [(0.8998820185661316, 1.0887004137039185),
                     (0.8431480526924133, 0.8592690825462341),
                     (0.8322747945785522, 0.8514002561569214),
                     (0.7880150675773621, 0.8393602967262268),
@@ -205,15 +205,15 @@ barcode_bdtest_1 = [(0.8998820185661316, 1.0887004137039185),
                     (0.12529709935188293, 0.13184352219104767)]
 
 K_1 = 4
-ORIGINAL_LENGTH_1 = len(barcode_bdtest_1)
-original_1 = pl_runner(barcode_bdtest_1, K_1)
-barcodes_1 = barcode_runner(barcode_bdtest_1, K_1)
-print("Removed " + str(ORIGINAL_LENGTH_1 - len(barcodes_1)) + " pairs. " +
-      str(ORIGINAL_LENGTH_1 / float(len(barcodes_1))) + "%")
+ORIGINAL_LENGTH_1 = len(BARCODE_BDTEST_1)
+ORIGINAL_1 = pl_runner(BARCODE_BDTEST_1, K_1)
+BARCODES_1 = barcode_runner(BARCODE_BDTEST_1, K_1)
+print("Removed " + str(ORIGINAL_LENGTH_1 - len(BARCODES_1)) + " pairs. " +
+      str(ORIGINAL_LENGTH_1 / float(len(BARCODES_1))) + "%")
 
-filtered_1 = pl_runner(barcodes_1, K_1)
+FILTERED_1 = pl_runner(BARCODES_1, K_1)
 # https://stackoverflow.com/questions/3462143/get-difference-between-two-lists
-print(compare_landscapes(original_1, filtered_1))
+print(compare_landscapes(ORIGINAL_1, FILTERED_1))
 
 # k_2 = 2
 # original_2 = pl_runner(problem_pairs_3, k_2)
