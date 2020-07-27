@@ -6,7 +6,7 @@ jobs:
             steps:
                   - checkout
                   - restore_cache:
-                        key: deps1-{{ .Branch }}-{{ checksum "requirements/stage1.txt" }}-{{ checksum "requirements/stage2.txt" }}-{{ checksum "requirements/linting.txt" }}
+                        key: deps1-{{ .Branch }}-{{ checksum "requirements/stage1.txt" }}-{{ checksum "requirements/stage2.txt" }}
 
                   - run:
                         name: Install Python Dependencies and setup a venv
@@ -17,15 +17,15 @@ jobs:
                               pip install -r requirements/stage1.txt
                               pip install -r requirements/stage2.txt
                   - save_cache:
-                        key: deps1-{{ .Branch }}-{{ checksum "requirements/stage1.txt" }}-{{ checksum "requirements/stage2.txt" }}-{{ checksum "requirements/linting.txt" }}
+                        key: deps1-{{ .Branch }}-{{ checksum "requirements/stage1.txt" }}-{{ checksum "requirements/stage2.txt" }}
                         paths:
                               - "venv"
-                  - run:
-                        name: Linting Codebase
-                        command: |
-                              . venv/bin/activate
-                              pip install --user -r requirements/linting.txt
-                              find . -type f -name "*.py" -not -path "./util/*" -not -path "./venv/*" | xargs -L1 python3.8 util/linter.py
+                  # - run:
+                  #       name: Linting Codebase
+                  #       command: |
+                  #             . venv/bin/activate
+                  #             pip install --user -r requirements/linting.txt
+                  #             find . -type f -name "*.py" -not -path "./util/*" -not -path "./venv/*" | xargs -L1 python3.8 util/linter.py
                   - run:
                         name: Run Integration Tests
                         command: |
