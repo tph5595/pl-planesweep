@@ -12,6 +12,11 @@ import pytest
 from barcode import BarcodeFilter
 from pl_planesweep import PersistantLandscape
 
+
+def test_func():
+    """ Just a test """
+    assert (1 + 0) == 1
+
 def pl_test_1():
     """ Basic test with 3 bd_pairs """
     bd_pairs = [(0, 6), (1, 3), (2, 7)]
