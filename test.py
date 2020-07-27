@@ -2,11 +2,11 @@
 # Ripser dataset creation
 import random
 import tadasets
-import numpy as np
 from ripser import ripser
+import numpy as np
 
 # Testing framework
-import pytest
+# import pytest
 
 # Files to be tested
 from barcode import BarcodeFilter

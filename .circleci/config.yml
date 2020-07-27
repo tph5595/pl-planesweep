@@ -13,7 +13,8 @@ jobs:
                               echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
                               python3 -m venv venv
                               . venv/bin/activate
-                              pip install -Iv Cython==0.29.12 numpy==1.19.1
+                              pip install -Iv Cython==0.29.12 
+                              pip install -Iv numpy==1.19.1
                               pip install --user -r requirements.txt
                   - save_cache:
                         key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
