@@ -319,3 +319,23 @@ class PersistantLandscape:
                 x, y = poly.xy
                 ax.plot(x, y)
         plt.show()
+
+    def __line_int(self, a, b):
+        """ Returns the area under a line segment starting at a and ending at b
+        assuming they have a slope of 1 or -1"""
+        bottom = b[0] - a[0]
+        side = abs(b[1]-a[1]) / 2
+        return  bottom * side
+
+    def integrate(self):
+        """ Integrate the area under a persisnat landscape or the differnce if
+        multiple
+        Note: This should be done on the GPU"""
+        result = []
+        for landscape in self.landscapes:
+            # Calculating difference list
+            partial_integration = 0
+            for prev, current in zip(landscape[0::], landscape[1::]):
+                partial_integration += self.__line_int(prev, current)
+            result.append(partial_integration)
+        return result
