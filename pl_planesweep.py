@@ -327,12 +327,14 @@ class PersistantLandscape:
         side = abs(b[1]-a[1]) / 2
         return  bottom * side
 
-    def integrate(self):
+    def integrate(self, landscapes=None):
         """ Integrate the area under a persisnat landscape or the differnce if
         multiple
         Note: This should be done on the GPU"""
         result = []
-        for landscape in self.landscapes:
+        if landscapes is None:
+            landscapes = self.landscapes
+        for landscape in landscapes:
             # Calculating difference list
             partial_integration = 0
             for prev, current in zip(landscape[0::], landscape[1::]):

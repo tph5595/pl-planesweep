@@ -44,6 +44,7 @@ def test_pl_runner(bd_pairs, k, answer, debug=False):
     pl_obj = PersistantLandscape(bd_pairs, k)
     pl_obj.enable_debug(debug)
     landscapes = pl_obj.generate_landscapes()
+    return landscapes
     # pl_obj.plot()
     # assert compare_landscapes(landscapes, answer)
 
@@ -560,6 +561,35 @@ BARCODE_BDTEST_1 = [(0.8998820185661316, 1.0887004137039185),
 # barcodes_2 = barcode_runner(problem_pairs_3, k_2)
 # filtered_2 = pl_runner(problem_pairs_3, k_2)
 
-K_2 = 1
-FILTERED_2 = barcode_runner(BARCODE_BDTEST_2, K_2)
-test_pl_runner(FILTERED_2, K_2, [])
+def find_problem_pairs(number_pairs, seed, k, minn, maxx):
+    """ Do random search for problem pairs """
+    # Set seed
+    random.seed(a=seed, version=2)
+    barcodes = []
+    for _ in range(number_pairs):
+        start = random.uniform(minn, maxx)
+        length = random.uniform(minn, maxx)
+        barcodes.append((int(start), int(start + length)))
+    # Show the pairs
+    print(barcodes)
+    # Calculate
+    filtered = barcode_runner(barcodes, k)
+    landscapes = test_pl_runner(filtered, k, [])
+    pl_obj_new = PersistantLandscape([], 0)
+    pl_obj_new.integrate(landscapes)
+
+I = 0
+MIN = 0
+MAX = 100
+PAIRS = 10
+K = (PAIRS*PAIRS)
+while True:
+    print(I)
+    find_problem_pairs(PAIRS, I, K, MIN, MAX)
+    I = I + 1
+
+# K_2 = 3
+# FILTERED_2 = barcode_runner(BARCODE_BDTEST_2, K_2)
+# LANDSCAPES = test_pl_runner(FILTERED_2, K_2, [])
+# PL_OBJ_NEW = PersistantLandscape([], 0)
+# INTS = pl_obj_new.integrate(landscapes)

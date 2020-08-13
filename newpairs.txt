@@ -1,0 +1,37 @@
+[(13, 98), (76, 101), (49, 94), (65, 144), (9, 12), (83, 126), (76, 76), (44, 116), (22, 117), (90, 93)]
+Traceback (most recent call last):
+  File "test.py", line 588, in <module>
+    find_problem_pairs(PAIRS, I, K, MIN, MAX)
+  File "test.py", line 577, in find_problem_pairs
+    landscapes = test_pl_runner(filtered, k, [])
+  File "test.py", line 46, in test_pl_runner
+    landscapes = pl_obj.generate_landscapes()
+  File "/home/vectare/Documents/thesis/pl-planesweep/pl_planesweep.py", line 298, in generate_landscapes
+    self.__handle_birth_point(event)
+  File "/home/vectare/Documents/thesis/pl-planesweep/pl_planesweep.py", line 222, in __handle_birth_point
+    self.__add_intersection_event(event.parent_mountain, neighbor)
+  File "/home/vectare/Documents/thess/pl-planesweep/pl_planesweep.py", line 212, in __add_intersection_event
+    int_tup = (int_pt.x, int_pt.y)
+AttributeError: 'LineString' object has no attribute 'x'
+
+
+
+
+
+
+[(677, 1462), (520, 1031), (393, 1390), (289, 437), (261, 521), (327, 595), (107, 433), (311, 880), (201, 272), (202, 744), (388, 1122), (803, 1217), (99, 827), (755, 1151), (658, 957), (914, 1748), (791, 1745), (232, 778), (731, 1532), (390, 528),
+(626, 730), (705, 712), (454, 934), (119, 599), (500, 869), (896, 1762), (890, 1135), (25, 402), (113, 818), (262, 391), (283, 687), (735, 1196), (301, 978), (45, 254), (687, 1439), (101, 167), (505, 1162), (16, 452), (274, 359), (171, 456), (467, 579), (620, 1499), (683, 751), (648, 1282), (8, 393), (652, 1602), (928, 1498), (588, 1547), (210, 719), (61, 836)]
+Traceback (most recent call last):
+  File "test.py", line 588, in <module>
+    find_problem_pairs(PAIRS, I, K, MIN, MAX)
+  File "test.py", line 577, in find_problem_pairs
+    landscapes = test_pl_runner(filtered, k, [])
+  File "test.py", line 46, in test_pl_runner
+    landscapes = pl_obj.generate_landscapes()
+  File "/home/vectare/Documents/thesis/pl-planesweep/pl_planesweep.py", line 302, in generate_landscapes
+    self.__handle_intersection_point(event)
+  File "/home/vectare/Documents/thesis/pl-planesweep/pl_planesweep.py", line 256, in __handle_intersection_point
+    self.__flip_points(new_top_mtn, new_bot_mtn)
+  File "/home/vectare/Documents/thesis/pl-planesweep/pl_planesweep.py", line 248, in __flip_points
+    self.status[mountain2.get_pos()] = mountain2
+IndexError: list assignment index out of range
