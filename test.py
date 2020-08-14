@@ -27,7 +27,8 @@ PROBLEM_PAIRS_3 = [(0.7875611782073975, 0.7921156287193298),
                    (0.7229699492454529, 0.7927138209342957),
                    (0.7065669894218445, 0.7505898475646973)]
 
-PROBLEM_PAIRS_4 = [(1, 3), (3, 5)] # TODO
+TEST_2_BDS = [(1, 3), (3, 5)]
+TEST_2_ANS = [[(0, 1), (2, 2), (0, 3), (0, 3), (1, 4), (0, 5)], []]
 
 # Should remove infs
 TEST_5_BDS = [(3, float("inf")),
@@ -40,7 +41,7 @@ TEST_1_ANS = [[(0.0, 0), (3.0, 3.0), (4.0, 2.0), (4.5, 2.5), (7.0, 0)], [(1.0,\
     0), (2.0, 1.0), (2.5, 0.5), (4.0, 2.0), (6.0, 0)], [(2.0, 0), (2.5, 0.5),\
         (3.0, 0)], []]
 @pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_1_BDS, 4, TEST_1_ANS),\
-        (TEST_5_BDS, 2, TEST_5_ANS)])
+        (TEST_5_BDS, 2, TEST_5_ANS), (TEST_2_BDS, 2, TEST_2_ANS)])
 def test_pl_runner(bd_pairs, k, answer, debug=False):
     """ Test runner far pl_planesweep """
     pl_obj = PersistantLandscape(bd_pairs, k)
@@ -580,15 +581,15 @@ def find_problem_pairs(number_pairs, seed, k, minn, maxx):
     pl_obj_new = PersistantLandscape([], 0)
     pl_obj_new.integrate(landscapes)
 
-I = 0
-MIN = 0
-MAX = 10
-PAIRS = 10
-K = (PAIRS*PAIRS)
-while True:
-    print(I)
-    find_problem_pairs(PAIRS, I, K, MIN, MAX)
-    I = I + 1
+# I = 0
+# MIN = 0
+# MAX = 10
+# PAIRS = 10
+# K = (PAIRS*PAIRS)
+# while True:
+#     print(I)
+#     find_problem_pairs(PAIRS, I, K, MIN, MAX)
+#     I = I + 1
 
 # K_2 = 3
 # FILTERED_2 = barcode_runner(BARCODE_BDTEST_2, K_2)
