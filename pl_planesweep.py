@@ -51,9 +51,9 @@ class PersistantMountain:
 class Event:
     """Container for the information related to a PersistantLandscape event """
     # Defines the sorting order of different event points
-    BIRTH_POINT = 0
-    MIDDL_POINT = 1
-    DEATH_POINT = 2
+    DEATH_POINT = 0
+    BIRTH_POINT = 1
+    MIDDL_POINT = 2
     INTER_POINT = 3
 
     def __init__(self, typ, point, parent_mountain, parent_mountain2=None):
@@ -69,7 +69,7 @@ class Event:
     def sort_order(self):
         """Returns a tuple of the different parameters to sort on in order. The
         last value is the item itself."""
-        return (self.point[0], self.point[1], id(self), self)
+        return (self.point[0], self.point[1], self.typ, id(self), self)
 
 
 class PersistantLandscape:

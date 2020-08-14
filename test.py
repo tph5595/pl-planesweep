@@ -27,6 +27,8 @@ PROBLEM_PAIRS_3 = [(0.7875611782073975, 0.7921156287193298),
                    (0.7229699492454529, 0.7927138209342957),
                    (0.7065669894218445, 0.7505898475646973)]
 
+PROBLEM_PAIRS_4 = [(1, 3), (3, 5)] # TODO
+
 # Should remove infs
 TEST_5_BDS = [(3, float("inf")),
               (0, 6)]
@@ -568,7 +570,7 @@ def find_problem_pairs(number_pairs, seed, k, minn, maxx):
     barcodes = []
     for _ in range(number_pairs):
         start = random.uniform(minn, maxx)
-        length = random.uniform(minn, maxx)
+        length = random.uniform(minn, maxx)+1
         barcodes.append((int(start), int(start + length)))
     # Show the pairs
     print(barcodes)
@@ -580,7 +582,7 @@ def find_problem_pairs(number_pairs, seed, k, minn, maxx):
 
 I = 0
 MIN = 0
-MAX = 100
+MAX = 10
 PAIRS = 10
 K = (PAIRS*PAIRS)
 while True:
