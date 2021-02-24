@@ -27,8 +27,7 @@ PROBLEM_PAIRS_3 = [(0.7875611782073975, 0.7921156287193298),
                    (0.7065669894218445, 0.7505898475646973)]
 
 TEST_2_BDS = [(1, 3), (3, 5)]
-TEST_2_ANS = [[(0, 1), (2, 2), (0, 3), (0, 3), (1, 4), (0, 5)], []]
-
+TEST_2_ANS = [[(1.0, 0), (2.0, 1.0), (3.0, 0), (3.0, 0), (4.0, 1.0), (5.0, 0)], []]
 # Should remove infs
 TEST_5_BDS = [(3, float("inf")),
               (0, 6)]
@@ -46,9 +45,8 @@ def test_pl_runner(bd_pairs, k, answer, debug=False):
     pl_obj = pl_sweep.pl_planesweep.PersistenceLandscape(bd_pairs, k)
     pl_obj.enable_debug(debug)
     landscapes = pl_obj.generate_landscapes()
-    return landscapes
     # pl_obj.plot()
-    # assert compare_landscapes(landscapes, answer)
+    assert compare_landscapes(landscapes, answer)
 
 
 def barcode_table_tests():
