@@ -1,2 +1,2 @@
 from .barcode import BarcodeFilter
-from .pl_planesweep import PersistantLandscape
+from .pl_planesweep import PersistenceLandscape

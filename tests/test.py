@@ -10,9 +10,6 @@ import pytest
 
 # Files to be tested
 from .context import pl_sweep
-# barcode import BarcodeFilter
-from .context import pl_sweep
-# pl_planesweep import PersistantLandscape
 
 # with k = 3
 PROBLEM_PAIRS_1 = [(0.9748720526695251, 0.9898090958595276),
@@ -46,7 +43,7 @@ TEST_1_ANS = [[(0.0, 0), (3.0, 3.0), (4.0, 2.0), (4.5, 2.5), (7.0, 0)], [(1.0,\
         (TEST_5_BDS, 2, TEST_5_ANS), (TEST_2_BDS, 2, TEST_2_ANS)])
 def test_pl_runner(bd_pairs, k, answer, debug=False):
     """ Test runner far pl_planesweep """
-    pl_obj = pl_sweep.pl_planesweep.PersistantLandscape(bd_pairs, k)
+    pl_obj = pl_sweep.pl_planesweep.PersistenceLandscape(bd_pairs, k)
     pl_obj.enable_debug(debug)
     landscapes = pl_obj.generate_landscapes()
     return landscapes
@@ -83,7 +80,7 @@ def prep_torus(seed):
     return map(lambda x: (x[0], x[1]), diagrams[1])
 
 def compare_landscapes(landscape1, landscape2):
-    """ Compares two PersistantLandscapes and returns True if they are the same """
+    """ Compares two PersistenceLandscapes and returns True if they are the same """
     # Make sure they have the same k
     if len(landscape1) != len(landscape2):
         return False
@@ -580,7 +577,7 @@ def find_problem_pairs(number_pairs, seed, k, minn, maxx):
     # Calculate
     filtered = barcode_runner(barcodes, k)
     landscapes = test_pl_runner(filtered, k, [])
-    pl_obj_new = PersistantLandscape([], 0)
+    pl_obj_new = PersistenceLandscape([], 0)
     pl_obj_new.integrate(landscapes)
 
 # I = 0
@@ -596,5 +593,5 @@ def find_problem_pairs(number_pairs, seed, k, minn, maxx):
 # K_2 = 3
 # FILTERED_2 = barcode_runner(BARCODE_BDTEST_2, K_2)
 # LANDSCAPES = test_pl_runner(FILTERED_2, K_2, [])
-# PL_OBJ_NEW = PersistantLandscape([], 0)
+# PL_OBJ_NEW = PersistenceLandscape([], 0)
 # INTS = pl_obj_new.integrate(landscapes)
