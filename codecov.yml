@@ -8,4 +8,6 @@ coverage:
 
 ignore:
       - "venv"
+      - "setup.py"
+      - "tests"
 
