@@ -48,6 +48,15 @@ def test_pl_runner(bd_pairs, k, answer, debug=False):
     # pl_obj.plot()
     assert compare_landscapes(landscapes, answer)
 
+@pytest.mark.parametrize("bd_pairs,k,answer", [(TEST_1_BDS, 4, [[], []])])
+def test_pl_runner_not_empty(bd_pairs, k, answer, debug=False):
+    """ Test runner far pl_planesweep """
+    pl_obj = pl_sweep.pl_planesweep.PersistenceLandscape(bd_pairs, k)
+    pl_obj.enable_debug(debug)
+    landscapes = pl_obj.generate_landscapes()
+    # pl_obj.plot()
+    assert not compare_landscapes(landscapes, answer)
+
 
 BARCODE_TEST_1 = [(0, 6), (1, 3), (2, 7)]
 BARCODE_TEST_1_ANS = [(0, 6), (2, 7)]
@@ -56,7 +65,14 @@ BARCODE_TEST_1_ANS = [(0, 6), (2, 7)]
 def test_barcode_basic(bd_pairs, k, answer):
     """ Table driven testing for the barcode_filter """
     result = barcode_runner(bd_pairs, 1)
-    compare_landscapes(result, answer)
+    compare_lists(result, answer)
+
+@pytest.mark.parametrize("bd_pairs,k,answer", [(BARCODE_TEST_1, 1,\
+    [])])
+def test_barcode_not_empty(bd_pairs, k, answer):
+    """ Table driven testing for the barcode_filter """
+    result = barcode_runner(bd_pairs, 1)
+    assert not compare_lists(result, answer)
 
 
 def barcode_runner(bd_pairs, k):
@@ -64,6 +80,7 @@ def barcode_runner(bd_pairs, k):
     barcode_filter = pl_sweep.barcode.BarcodeFilter(bd_pairs, k)
     filtered = barcode_filter.filter()
     return filtered
+
 
 
 # def prep_torus(seed):
@@ -95,6 +112,7 @@ def compare_landscapes(landscape1, landscape2):
     for i, _ in enumerate(landscape1, 0):
         # The len will be 0 when there are no differing pairs
         if not compare_lists(landscape1[i], landscape2[i]):
+            print("bad 3")
             return False
     return True
 
