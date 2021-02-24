@@ -3,3 +3,6 @@ __pycache__/*
 test-reports/*
 venv/*
 .coverage
+build/*
+dist/*
+pl_sweep.egg-info/*
