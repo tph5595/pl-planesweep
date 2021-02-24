@@ -14,8 +14,7 @@ jobs:
                               echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
                               python3 -m venv venv
                               . venv/bin/activate
-                              pip install -r requirements/stage1.txt
-                              pip install -r requirements/stage2.txt
+                              make init
                   - save_cache:
                         key: deps1-{{ .Branch }}-{{ checksum "requirements/stage1.txt" }}-{{ checksum "requirements/stage2.txt" }}
                         paths:
@@ -30,7 +29,7 @@ jobs:
                         name: Run Integration Tests
                         command: |
                               . venv/bin/activate
-                              pytest --cov=./ --junitxml=test-reports/junit.xml --html=test-reports/pytest_report.html --self-contained-html tests/test.py
+                              make test
                   - store_test_results:
                         path: test-reports
                   - store_artifacts:
