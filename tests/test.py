@@ -49,10 +49,14 @@ def test_pl_runner(bd_pairs, k, answer, debug=False):
     assert compare_landscapes(landscapes, answer)
 
 
-def barcode_table_tests():
+BARCODE_TEST_1 = [(0, 6), (1, 3), (2, 7)]
+BARCODE_TEST_1_ANS = [(0, 6), (2, 7)]
+@pytest.mark.parametrize("bd_pairs,k,answer", [(BARCODE_TEST_1, 1,\
+    BARCODE_TEST_1_ANS)])
+def test_barcode_basic(bd_pairs, k, answer):
     """ Table driven testing for the barcode_filter """
-    bd_pairs = [(0, 6), (1, 3), (2, 7)]
-    print(barcode_runner(bd_pairs, 1))
+    result = barcode_runner(bd_pairs, 1)
+    compare_landscapes(result, answer)
 
 
 def barcode_runner(bd_pairs, k):
@@ -62,20 +66,25 @@ def barcode_runner(bd_pairs, k):
     return filtered
 
 
-def prep_torus(seed):
-    """ Creates torus_bd_pairs for testing using tadasets and ripser"""
-    random.seed(seed)
-    data = np.concatenate([
-        tadasets.dsphere(n=1000, d=1, r=10, noise=1.0),
-        tadasets.dsphere(n=500, d=1, r=5, noise=0.5),
-        tadasets.dsphere(n=100, d=1, r=1, noise=0.2)
-    ])
+# def prep_torus(seed):
+#     """ Creates torus_bd_pairs for testing using tadasets and ripser"""
+#     random.seed(seed)
+#     data = np.concatenate([
+#         tadasets.dsphere(n=1000, d=1, r=10, noise=1.0),
+#         tadasets.dsphere(n=500, d=1, r=5, noise=0.5),
+#         tadasets.dsphere(n=100, d=1, r=1, noise=0.2)
+#     ])
 
-    thresh = 1.5
-    results0 = ripser(data, thresh=thresh, maxdim=1)
+#     thresh = 1.5
+#     results0 = ripser(data, thresh=thresh, maxdim=1)
 
-    diagrams = results0['dgms']
-    return map(lambda x: (x[0], x[1]), diagrams[1])
+#     diagrams = results0['dgms']
+#     return map(lambda x: (x[0], x[1]), diagrams[1])
+
+def compare_lists(l1, l2):
+    if len(set(l1).symmetric_difference(set(l2))) != 0:
+        return False
+    return True
 
 def compare_landscapes(landscape1, landscape2):
     """ Compares two PersistenceLandscapes and returns True if they are the same """
@@ -85,7 +94,7 @@ def compare_landscapes(landscape1, landscape2):
     # Ensure they have the same pairs in eacb persistant landscape
     for i, _ in enumerate(landscape1, 0):
         # The len will be 0 when there are no differing pairs
-        if len(set(landscape1[i]).symmetric_difference(set(landscape2[i]))) != 0:
+        if not compare_lists(landscape1[i], landscape2[i]):
             return False
     return True
 
@@ -561,22 +570,22 @@ BARCODE_BDTEST_1 = [(0.8998820185661316, 1.0887004137039185),
 # barcodes_2 = barcode_runner(problem_pairs_3, k_2)
 # filtered_2 = pl_runner(problem_pairs_3, k_2)
 
-def find_problem_pairs(number_pairs, seed, k, minn, maxx):
-    """ Do random search for problem pairs """
-    # Set seed
-    random.seed(a=seed, version=2)
-    barcodes = []
-    for _ in range(number_pairs):
-        start = random.uniform(minn, maxx)
-        length = random.uniform(minn, maxx)+1
-        barcodes.append((int(start), int(start + length)))
-    # Show the pairs
-    print(barcodes)
-    # Calculate
-    filtered = barcode_runner(barcodes, k)
-    landscapes = test_pl_runner(filtered, k, [])
-    pl_obj_new = PersistenceLandscape([], 0)
-    pl_obj_new.integrate(landscapes)
+# def find_problem_pairs(number_pairs, seed, k, minn, maxx):
+#     """ Do random search for problem pairs """
+#     # Set seed
+#     random.seed(a=seed, version=2)
+#     barcodes = []
+#     for _ in range(number_pairs):
+#         start = random.uniform(minn, maxx)
+#         length = random.uniform(minn, maxx)+1
+#         barcodes.append((int(start), int(start + length)))
+#     # Show the pairs
+#     print(barcodes)
+#     # Calculate
+#     filtered = barcode_runner(barcodes, k)
+#     landscapes = test_pl_runner(filtered, k, [])
+#     pl_obj_new = PersistenceLandscape([], 0)
+#     pl_obj_new.integrate(landscapes)
 
 # I = 0
 # MIN = 0
