@@ -3,63 +3,6 @@
 
 from heapq import heappush, heappop
 
-
-class Node:
-    """ Node for the StackLinkedList """
-
-    def __init__(self, data):
-        """ Creates a new Node """
-        self.data = data
-        self.next = None
-        self.prev = None
-
-    def remove(self):
-        """ Removes a node from the structure """
-        if self.next is not None:
-            self.next.prev = self.prev
-        if self.prev is not None:
-            self.prev.next = self.next
-        return (self.prev, self.next)
-
-
-class StackLinkedList:
-    """ Data structure needed for BarcodeFilter """
-
-    def __init__(self):
-        """ Prepare the structure for data """
-        self.__len = 0
-        self.head = None
-        self.tail = None
-
-    def insert(self, node):
-        """ Insert a node into the data structure """
-        if self.head is None:
-            self.head = node
-            self.tail = node
-        else:
-            self.tail.next = node
-            node.prev = self.tail
-            self.tail = node
-        self.__len += 1
-
-    def remove(self, node):
-        """ Remove the given node from the StackLinkedList """
-        if node is Node:
-            return
-        neighbors = node.remove()
-        # Check if node was the head
-        if neighbors[0] is None:
-            self.head = neighbors[1]
-        # Check if node was the tail
-        if neighbors[1] is None:
-            self.tail = neighbors[0]
-        self.__len -= 1
-
-    def len(self):
-        """ Returns the length of the structure """
-        return self.__len
-
-
 class Event:
     """ Event data container """
 
@@ -89,7 +32,7 @@ class BarcodeFilter:
         self.bd_pairs = bd_pairs
         self.k = k
         self.sorted = False
-        self.stack = StackLinkedList()
+        self.stackSize = 0
         self.filtered = []
         self.top_k = {}
         self.events = []
@@ -99,13 +42,13 @@ class BarcodeFilter:
         self.bd_pairs = bd_pairs
 
     def __handle_birth_event(self, event):
-        if self.stack.len() < self.k:
+        if self.stackSize < self.k:
             self.filtered.append(self.bd_pairs[event.idx])
             self.top_k[event.idx] = True
-        self.stack.insert(event.node)
+        self.stackSize += 1
 
     def __handle_death_event(self, event):
-        self.stack.remove(event.node)
+        self.stackSize -= 1
         # If the node was apart of the top k then find the next node to add and
         # add it to the filtered output
         # TODO: Can keep track of the bottom most node so that no searching is

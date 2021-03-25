@@ -6,3 +6,4 @@ venv/*
 build/*
 dist/*
 pl_sweep.egg-info/*
+*/#*#
