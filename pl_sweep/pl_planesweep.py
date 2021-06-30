@@ -71,6 +71,18 @@ class Event:
         last value is the item itself."""
         return (self.point[0], self.point[1], self.typ, id(self), self)
 
+    def __str__(self):
+        str = ""
+        if self.typ == self.DEATH_POINT:
+            return "DEATH_POINT"
+        if self.typ == self.BIRTH_POINT:
+            return "BIRTH_POINT"
+        if self.typ == self.MIDDL_POINT:
+            return "MIDDL_POINT"
+        if self.typ == self.INTER_POINT:
+            return "INTER_POINT"
+        raise
+
 
 class PersistenceLandscape:
     """ Class to manage a presistant landscape and generate a presistant
@@ -222,6 +234,7 @@ class PersistenceLandscape:
             self.__add_intersection_event(event.parent_mountain, neighbor)
         if pos < self.max_lambda:
             self.landscapes[pos].append(event.point)
+        # print("add", self.max_pos)
 
     def __handle_mid_point(self, event):
         """ Update the data structure with the knowledge of a new mid point
@@ -276,6 +289,7 @@ class PersistenceLandscape:
         if pos < self.max_lambda:
             self.landscapes[pos].append(event.point)
         # Update the event structure
+        # print(self.max_pos)
         self.__status_remove()
 
     def generate_landscapes(self):
@@ -293,7 +307,10 @@ class PersistenceLandscape:
                 time.sleep(.300)
 
             # Get the next event
+            # for i in range(10):
             event = self.__event_remove()
+                # print(event)
+            # raise
             if event.typ == event.BIRTH_POINT:
                 self.__handle_birth_point(event)
             elif event.typ == event.MIDDL_POINT:

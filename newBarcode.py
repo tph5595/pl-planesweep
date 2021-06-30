@@ -48,8 +48,8 @@ def handle_death(event, stackSize, k, filteredSet, top_k, bd_pairs, stack,\
             new_e_i = int(stack[0])
             stack = np.delete(stack, 0)
             # print("pair in death{}".format(bd_pairs[new_e_i][0]))
-            filteredSet[filteredSize][0] = bd_pairs[new_e_i][1]
-            filteredSet[filteredSize][1] = bd_pairs[new_e_i][0]
+            filteredSet[filteredSize][0] = bd_pairs[new_e_i][0]
+            filteredSet[filteredSize][1] = bd_pairs[new_e_i][1]
             # filteredSet.append(bd_pairs[new_e_i])
             filteredSize = filteredSize + 1
             top_k[new_e_i] = 1
@@ -118,7 +118,8 @@ def getPairs(fn):
         if len(lis) != 2:
             print("bad line: {}".format(l))
             exit(1)
-        result.append(tuple(lis))
+        lis_better = (float(lis[0]), float(lis[1].rstrip()))
+        result.append(tuple(lis_better))
     return result
 
 if len(sys.argv) != 3:
@@ -129,16 +130,19 @@ if len(sys.argv) != 3:
 fn = sys.argv[1]
 iterations = int(sys.argv[2])
 bd_pairs = np.array(getPairs(fn))
-k = 2
+k = 10
 
-print("Starting test...")
+# print("Starting test...")
 
 start = time.time()
 for _ in range(iterations):
     bd_pairs_filtered =  filter(bd_pairs, k)
     # bd_pairs_filtered = bd_pairs
+    # print(bd_pairs_filtered)
+    # raise
     pl_obj = pl_planesweep.PersistenceLandscape(bd_pairs_filtered, k)
     pl_obj.generate_landscapes()
+    # pl_obj.plot()
 end = time.time()
 print(end -start)
 # if __name__ == "__main__":
